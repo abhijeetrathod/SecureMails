@@ -1,0 +1,109 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,lightning:actionOverride" controller="MyEmailSendController" access="global" >
+    <aura:attribute name="myEmail" type="MyEmail__c" default="{'To__c':'',
+                                                                           'Cc__c':'',
+                                                                           'Subject__c':'',
+                                                                           'Message__c':''
+                                                                           }"/>
+    
+    <aura:attribute name="mailStatus" type="boolean" default="false"/>
+    <aura:attribute name="files" type="List"/>
+    <aura:attribute name="parentId" type="Id" default="a007F00000lOowr"/>
+    <aura:attribute name="showLoadingSpinner" type="boolean" default="false" />
+    <aura:attribute name="fileName" type="String" default="No File Selected.." />
+    <aura:attribute name="attach" type="Attachment" default="{'Body':'','Name':'','ContentType':'','ParentId':''}"/>
+    
+   <!-- <force:recordData 
+        aura:id="recordLoader" 
+        recordId="{!v.recordId}" 
+        layoutType="FULL" 
+        mode="EDIT"
+        targetRecord="{!v.spInfo_Test__MyEmail__c}"
+        targetFields="{!v.myEmail.spInfo_Test__To__c}"/> -->
+        
+    
+    <div class="slds-page-header" role="banner">
+    	
+    	<h1 class="slds-page-header__title slds-m-right--small slds-align-middle slds-truncate" title="this should match">
+         Send Email.
+        </h1>
+        <div class="slds-text-color--weak">by spinfotech.com</div>
+    
+    </div>
+    
+    
+    <aura:if isTrue="{!v.mailStatus}">
+      <div role="alertdialog" tabindex="-1" aria-labelledby="prompt-heading-id" aria-describedby="prompt-message-wrapper" class="slds-modal slds-fade-in-open slds-modal--prompt">
+         <div class="slds-modal__container">
+            <div class="slds-modal__header slds-theme--error slds-theme--alert-texture">
+               <h2 class="slds-text-heading--medium" id="prompt-heading-id">Mail Status</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+               <div>
+                  <p>Email Sent successfully to {!v.myEmail.spInfo_Test__To__c}</p>
+               </div>
+            </div>
+            <div class="slds-modal__footer slds-theme--default">
+               <button class="slds-button slds-button--brand" onclick="{!c.closeMessage}">Close</button>
+            </div>
+         </div>
+      </div>
+      <div class="slds-backdrop slds-backdrop--open"></div>
+   </aura:if>
+   
+     
+   <div class="slds-m-around--medium">
+      <div class="slds-container--medium">
+         <div class="slds-form--stacked">
+            <div class="slds-form-element">
+               <label class="slds-form-element__label" for="CC">To</label>
+               <div class="slds-form-element__control">
+                  <ui:inputEmail class="slds-input" aura:id="email"  value="{!v.myEmail.spInfo_Test__To__c}" required="true" placeholder="abc@email.com"/>
+               </div>
+            </div>
+             <div class="slds-form-element">
+               <label class="slds-form-element__label" for="CC">Cc</label>
+               <div class="slds-form-element__control">
+                  <ui:inputEmail class="slds-input" aura:id="email"  value="{!v.myEmail.spInfo_Test__Cc__c}" required="true" placeholder="xyz@email.com"/>
+               </div>
+            </div>
+            <div class="slds-form-element">
+               <label class="slds-form-element__label" for="CC">Subject</label>
+               <div class="slds-form-element__control">
+                  <ui:inputText class="slds-input" aura:id="subject"  value="{!v.myEmail.spInfo_Test__Subject__c}" placeholder="Subject"/>
+               </div>
+            </div>
+            <div class="slds-form-element">
+               <label class="slds-form-element__label" for="textareaSample2">Mail Body</label>
+               <div class="slds-form-element__control">
+                  <lightning:inputRichText aura:id="body" value="{!v.myEmail.spInfo_Test__Message__c}" />
+               </div>
+            </div>
+             
+             
+			<!--<div class="slds-form-element">
+                <div class="slds-form-element__control">    
+                     <lightning:fileUpload label="Upload File" multiple="true" accept=".pdf, .png, .txt" recordId="{!v.recordId}" aura:id="multifileUpload" onuploadfinished="{!c.uploadFile}" />
+                </div>
+             </div>-->
+             
+             <lightning:input aura:id="fileId" onchange="{!c.handleFilesChange}" type="file" name="file" label="Upload Attachment" multiple="false" />
+   				<div class="slds-text-body_small slds-text-color_error">{!v.fileName} </div>
+             
+             <aura:if isTrue="{!v.showLoadingSpinner}">
+              <div class="slds-text-body_small slds-text-color_error">Uploading... 
+                 <img src="/auraFW/resources/aura/images/spinner.gif" class="spinner-img" alt="Loading"/>'
+              </div>
+           	</aura:if>
+             
+             <br/>
+           	<div class="slds-form-element">   
+           		<button class="slds-button slds-button_brand" onclick="{!c.doSave}">Upload Attachment</button>
+            </div>  
+            <div class="slds-form-element">    
+               <button class="slds-button slds-button--brand" onclick="{!c.sendEmail}">Send</button>
+            </div>
+         </div>
+      </div>
+    </div>
+    
+</aura:component>
